@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Environmental Monitor</title>
+  <link rel="stylesheet" href="./tailwind.css" />
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+  <div class="container mx-auto p-6 bg-white shadow-lg rounded">
+    <h1 class="text-3xl font-bold mb-4">Environmental Monitor Dashboard</h1>
+    <p><strong>Temperature:</strong> <span id="temperature">--</span> °C</p>
+    <p><strong>Humidity:</strong> <span id="humidity">--</span> %</p>
+  </div>
+
+  <script>
+    async function fetchEnvironmentalData() {
+      const response = await fetch('/data/environment');
+      const data = await response.json();
+      document.getElementById('temperature').textContent = `${data.temperature} °C`;
+      document.getElementById('humidity').textContent = `${data.humidity} %`;
+    }
+    setInterval(fetchEnvironmentalData, 2000); // Fetch every 2 seconds
+  </script>
+</body>
+</html>

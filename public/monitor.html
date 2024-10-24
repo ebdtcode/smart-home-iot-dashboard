@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Smart Environmental Monitor</title>
   <link rel="stylesheet" href="./tailwind.css" />
 </head>
@@ -16,19 +16,25 @@
       <!-- Temperature Card -->
       <div id="temperature-card" class="p-6 rounded-lg shadow-lg bg-gradient-to-r from-green-100 via-yellow-100 to-red-100">
         <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-2">Temperature</h2>
-        <p class="text-3xl sm:text-5xl font-bold text-gray-900"><span id="temperature">--</span> °C</p>
+        <p class="text-3xl sm:text-5xl font-bold text-gray-900">
+          <span id="temperature">--</span>
+        </p>
       </div>
 
       <!-- Humidity Card -->
       <div id="humidity-card" class="p-6 rounded-lg shadow-lg bg-gradient-to-r from-green-50 via-yellow-100 to-red-200">
         <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-2">Humidity</h2>
-        <p class="text-3xl sm:text-5xl font-bold text-gray-900"><span id="humidity">--</span> %</p>
+        <p class="text-3xl sm:text-5xl font-bold text-gray-900">
+          <span id="humidity">--</span>
+        </p>
       </div>
 
       <!-- Light Level Card -->
       <div id="light-card" class="p-6 rounded-lg shadow-lg bg-gradient-to-t from-yellow-100 to-yellow-300">
         <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-2">Light Level</h2>
-        <p class="text-3xl sm:text-5xl font-bold text-gray-900"><span id="light">--</span></p>
+        <p class="text-3xl sm:text-5xl font-bold text-gray-900">
+          <span id="light">--</span>
+        </p>
       </div>
 
       <!-- Sound Level Card with Progress Bar -->
@@ -36,7 +42,7 @@
         <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-2">Sound Level (dB)</h2>
         <div class="w-full bg-red-200 rounded-full h-6 overflow-hidden">
           <div id="sound-bar" class="h-full bg-red-600 text-white text-center w-0">
-            <span id="sound-level">--</span> dB
+            <span id="sound-level">--</span>
           </div>
         </div>
       </div>

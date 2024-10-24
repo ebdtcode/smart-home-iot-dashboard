@@ -1,76 +1,94 @@
-// path: '/dev/tty.usbmodem21301',  // Adjust to your port (e.g., COM3 on Windows)
-import express, { Request, Response, NextFunction } from 'express';
-import { SerialPort, ReadlineParser } from 'serialport';
-import path from 'path';
+import express, { Request, Response, NextFunction } from "express";
+import path from "path";
+import { SerialPort, ReadlineParser } from "serialport";
+import cors from "cors";
 
 const app = express();
-const PORT = process.env.PORT || 3000; // Use environment variable or default to 3000
+const PORT = process.env.PORT || 3000;
 
-// Add error handling for unhandled exceptions and rejections
-process.on('uncaughtException', (err) => {
-  console.error('Unhandled Exception:', err);
-});
+// Interfaces for sensor data
+interface EnvironmentalData {
+  temperature: number;
+  humidity: number;
+  light: number;
+  sound: number;
+}
 
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-});
+interface SecurityData {
+  motion: number;
+  sound: number;
+  led: number;
+}
 
-// Middleware to handle async errors properly
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.error(err.stack);
-  res.status(500).send('Something broke!');
-});
+// Default data
+let environmentalData: EnvironmentalData = {
+  temperature: 22,
+  humidity: 50,
+  light: 300,
+  sound: 30,
+};
 
-// Set CSP headers
-app.use((req: Request, res: Response, next: NextFunction) => {
-  res.setHeader(
-    'Content-Security-Policy',
-    "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self';"
-  );
-  next();
-});
+let securityData: SecurityData = {
+  motion: 0,
+  sound: 20,
+  led: 0,
+};
 
-// Serve static files from 'dist/public'
-app.use(express.static(path.join(__dirname, '../public')));
-
-// Serve index.html on the root route
-app.get('/', (req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, '../public/index.html'));
-});
-
-// Store the latest sensor data
-let latestData = { temperature: 0, humidity: 0, light: 0, sound: 0, timestamp: Date.now() };
-
-// Configure serial port with error handling
-const port = new SerialPort({
-  path: '/dev/tty.usbmodem21301',  // Adjust based on your system's serial port path
+// Configure Serial Port for Environmental Monitor
+const environmentalPort = new SerialPort({
+  path: "/dev/tty.usbmodem21301", // Replace with your actual serial port path
   baudRate: 9600,
 });
 
-port.on('error', (err) => {
-  console.error('Serial Port Error:', err);
-});
-
-const parser = port.pipe(new ReadlineParser({ delimiter: '\n' }));
-
-parser.on('data', (data: string) => {
+const environmentalParser = environmentalPort.pipe(new ReadlineParser({ delimiter: "\n" }));
+environmentalParser.on("data", (data: string) => {
   try {
-    latestData = JSON.parse(data);
-    latestData.timestamp = Date.now();
-    console.log('Received data:', latestData);
-  } catch (err) {
-    console.error('Failed to parse data:', err);
+    const parsedData = JSON.parse(data);
+    environmentalData = { ...environmentalData, ...parsedData };
+    console.log("Environmental Data:", environmentalData);
+  } catch (error) {
+    console.error("Error parsing environmental data:", error);
   }
 });
 
-// Endpoint to return the latest sensor data
-app.get('/data', (req: Request, res: Response) => {
-  res.json(latestData);
+// Configure Serial Port for Home Security Monitor
+const securityPort = new SerialPort({
+  path: "/dev/tty.usbmodem214201", // Replace with your actual serial port path
+  baudRate: 9600,
 });
 
-// Start the server with error handling
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
-}).on('error', (err) => {
-  console.error('Server Error:', err);
+const securityParser = securityPort.pipe(new ReadlineParser({ delimiter: "\n" }));
+securityParser.on("data", (data: string) => {
+  try {
+    const parsedData = JSON.parse(data);
+    securityData = { ...securityData, ...parsedData };
+    console.log("Security Data:", securityData);
+  } catch (error) {
+    console.error("Error parsing security data:", error);
+  }
 });
+
+// Middleware for CORS and static files
+app.use(cors());
+app.use(express.static(path.join(__dirname, "../public")));
+
+// Routes for HTML pages
+app.get("/", (_, res) => res.sendFile(path.join(__dirname, "../public/main.html")));
+app.get("/home", (_, res) => res.sendFile(path.join(__dirname, "../public/home.html")));
+app.get("/monitor", (_, res) => res.sendFile(path.join(__dirname, "../public/monitor.html")));
+
+// API routes to fetch data
+app.get("/data/environment", (_, res) => res.json(environmentalData));
+app.get("/data/security", (_, res) => res.json(securityData));
+
+// 404 error handler
+app.use((req, res) => res.status(404).send("404 - Page Not Found"));
+
+// Global error handler
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  console.error(err.stack);
+  res.status(500).send("Something went wrong!");
+});
+
+// Start the server
+app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
