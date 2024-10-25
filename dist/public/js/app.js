@@ -68,36 +68,49 @@ function fetchEnvironmentalData() {
         try {
             console.log('Fetching environmental data...');
             const response = yield fetch('/data/environment');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
             const data = yield response.json();
             console.log('Received environmental data:', data);
-            // Update temperature
-            const tempElement = document.getElementById('temperature');
-            if (tempElement) {
-                tempElement.textContent = `${data.temperature.toFixed(1)} °C`;
+            // Verify DOM elements exist before updating
+            const elements = {
+                temperature: document.getElementById('temperature'),
+                humidity: document.getElementById('humidity'),
+                light: document.getElementById('light'),
+                soundBar: document.getElementById('sound-bar'),
+                soundLevel: document.getElementById('sound-level'),
+                timestamp: document.getElementById('timestamp')
+            };
+            // Check if any elements are missing
+            Object.entries(elements).forEach(([name, element]) => {
+                if (!element)
+                    console.error(`Missing DOM element: ${name}`);
+            });
+            // Update elements if they exist
+            if (elements.temperature) {
+                elements.temperature.textContent = `${data.temperature.toFixed(1)} °C`;
                 updateTemperatureColor(data.temperature);
             }
-            // Update humidity
-            const humidElement = document.getElementById('humidity');
-            if (humidElement) {
-                humidElement.textContent = `${data.humidity.toFixed(1)} %`;
+            if (elements.humidity) {
+                elements.humidity.textContent = `${data.humidity.toFixed(1)} %`;
                 updateHumidityColor(data.humidity);
             }
-            // Update light level
-            const lightElement = document.getElementById('light');
-            if (lightElement) {
-                lightElement.textContent = `${data.light} lux`;
+            if (elements.light) {
+                elements.light.textContent = `${data.light} lux`;
                 updateLightColor(data.light);
             }
             // Update sound level
-            updateSoundLevel(data.sound);
+            if (elements.soundBar && elements.soundLevel) {
+                updateSoundLevel(data.sound);
+            }
             // Update timestamp
-            const timestampElement = document.getElementById('timestamp');
-            if (timestampElement) {
-                timestampElement.textContent = new Date().toLocaleString();
+            if (elements.timestamp) {
+                elements.timestamp.textContent = new Date().toLocaleString();
             }
         }
         catch (error) {
-            console.error('Error fetching environmental data:', error);
+            console.error('Error in fetchEnvironmentalData:', error);
         }
     });
 }
@@ -105,8 +118,14 @@ function fetchEnvironmentalData() {
 function fetchSecurityData() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            console.log('Fetching security data...'); // Add logging
             const response = yield fetch('/data/security');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
             const data = yield response.json();
+            console.log('Received security data:', data); // Add logging
+            // Update UI elements
             updateMotionStatus(data.motion, data.led);
             updateSoundLevel(data.sound);
             document.getElementById('timestamp').textContent = new Date().toLocaleString();
@@ -118,70 +137,70 @@ function fetchSecurityData() {
 }
 // Update light dashboard
 function updateLightDashboard(data) {
-    console.log("Updating light dashboard with data:", data);
-    const redLed = document.getElementById('red-led');
-    const greenLed = document.getElementById('green-led');
-    const blueLed = document.getElementById('blue-led');
+    // Update button state
     const buttonStateElement = document.getElementById('button-state');
-    const currentStateElement = document.getElementById('current-state');
-    if (redLed && greenLed && blueLed) {
-        // Remove all classes first
-        redLed.classList.remove('led-on', 'led-off');
-        greenLed.classList.remove('led-on', 'led-off');
-        blueLed.classList.remove('led-on', 'led-off');
-        // Then add the appropriate class
-        redLed.classList.add(data.state === 0 ? 'led-on' : 'led-off');
-        greenLed.classList.add(data.state === 1 ? 'led-on' : 'led-off');
-        blueLed.classList.add(data.state === 2 ? 'led-on' : 'led-off');
-        console.log("LED states updated:", {
-            red: data.state === 0 ? 'on' : 'off',
-            green: data.state === 1 ? 'on' : 'off',
-            blue: data.state === 2 ? 'on' : 'off'
-        });
-    }
-    else {
-        console.error("LED elements not found");
-    }
     if (buttonStateElement) {
-        buttonStateElement.textContent = data.buttonState === 1 ? 'Pressed' : 'Not Pressed';
-        console.log("Updated button state:", buttonStateElement.textContent);
+        buttonStateElement.textContent = data.buttonState ? 'Pressed' : 'Released';
     }
-    else {
-        console.error("Button state element not found");
-    }
+    // Update current state with color
+    const currentStateElement = document.getElementById('current-state');
     if (currentStateElement) {
         let stateText = '';
+        let stateClass = '';
         switch (data.state) {
             case 0:
-                stateText = 'Red';
+                stateText = 'Stop';
+                stateClass = 'text-red-600';
                 break;
             case 1:
-                stateText = 'Green';
+                stateText = 'Go';
+                stateClass = 'text-green-600';
                 break;
             case 2:
-                stateText = 'Blue';
+                stateText = 'Alert';
+                stateClass = 'text-blue-600';
                 break;
-            default: stateText = 'Unknown';
+            default:
+                stateText = '--';
+                stateClass = 'text-gray-600';
         }
+        // Remove all possible state classes
+        currentStateElement.classList.remove('text-red-600', 'text-green-600', 'text-blue-600', 'text-gray-600');
+        // Add the current state class and update text
+        currentStateElement.classList.add(stateClass);
         currentStateElement.textContent = stateText;
-        console.log("Updated current state:", stateText);
     }
-    else {
-        console.error("Current state element not found");
-    }
+    // Update LED states
+    updateLEDStates(data.state);
+    // Update timestamp
     const timestampElement = document.getElementById('timestamp');
     if (timestampElement) {
         const now = new Date();
-        const formattedTime = new Intl.DateTimeFormat('en-US', {
+        timestampElement.textContent = now.toLocaleTimeString('en-US', {
             hour: '2-digit',
             minute: '2-digit',
-            second: '2-digit',
-            hour12: true
-        }).format(now);
-        timestampElement.textContent = formattedTime;
+            second: '2-digit'
+        });
     }
-    else {
-        console.error("Timestamp element not found");
+}
+function updateLEDStates(state) {
+    const redLed = document.querySelector('#red-led .led');
+    const greenLed = document.querySelector('#green-led .led');
+    const blueLed = document.querySelector('#blue-led .led');
+    // Reset all LEDs
+    [redLed, greenLed, blueLed].forEach(led => {
+        if (led) {
+            led.classList.remove('led-on');
+            led.classList.add('led-off');
+        }
+    });
+    // Activate current LED
+    const activeLed = state === 0 ? redLed :
+        state === 1 ? greenLed :
+            state === 2 ? blueLed : null;
+    if (activeLed) {
+        activeLed.classList.remove('led-off');
+        activeLed.classList.add('led-on');
     }
 }
 // Fetch and update smart light data

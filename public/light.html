@@ -80,30 +80,41 @@
 
       <div id="traffic-light-card" class="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
         <!-- Red LED -->
-        <div id="red-led" class="p-6 rounded-lg shadow-lg cursor-pointer transition-all duration-300">
-          <h2 class="text-xl font-semibold text-gray-800 mb-2">Red LED</h2>
-          <div class="w-16 h-16 rounded-full mx-auto led-off"></div>
+        <div id="red-led" class="led-card">
+          <h2 class="led-card-header">STOP LIGHT</h2>
+          <div class="led-container">
+            <div class="led led-off"></div>
+          </div>
+          <div class="led-status-text">Tap to activate</div>
         </div>
 
         <!-- Green LED -->
-        <div id="green-led" class="p-6 rounded-lg shadow-lg cursor-pointer transition-all duration-300">
-          <h2 class="text-xl font-semibold text-gray-800 mb-2">Green LED</h2>
-          <div class="w-16 h-16 rounded-full mx-auto led-off"></div>
+        <div id="green-led" class="led-card">
+          <h2 class="led-card-header">GO LIGHT</h2>
+          <div class="led-container">
+            <div class="led led-off"></div>
+          </div>
+          <div class="led-status-text">Tap to activate</div>
         </div>
 
         <!-- Blue LED -->
-        <div id="blue-led" class="p-6 rounded-lg shadow-lg cursor-pointer transition-all duration-300">
-          <h2 class="text-xl font-semibold text-gray-800 mb-2">Blue LED</h2>
-          <div class="w-16 h-16 rounded-full mx-auto led-off"></div>
+        <div id="blue-led" class="led-card">
+          <h2 class="led-card-header">ALERT LIGHT</h2>
+          <div class="led-container">
+            <div class="led led-off"></div>
+          </div>
+          <div class="led-status-text">Tap to activate</div>
         </div>
       </div>
 
-      <div class="mt-8">
+      <div class="mt-8 space-y-3">
         <p class="text-lg">
-          Button State: <span id="button-state" class="font-semibold">--</span>
+          Button State: 
+          <span id="button-state" class="font-semibold text-indigo-600">--</span>
         </p>
         <p class="text-lg">
-          Current State: <span id="current-state" class="font-semibold">--</span>
+          Current State: 
+          <span id="current-state" class="font-semibold">--</span>
         </p>
       </div>
 
