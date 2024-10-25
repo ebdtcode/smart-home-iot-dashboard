@@ -2,20 +2,44 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Add these custom classes */
+/* Enhanced LED styles */
 .led-on {
   @apply bg-opacity-100 shadow-lg;
+  filter: brightness(1.2) saturate(1.5);
+  box-shadow: 0 0 20px currentColor, 0 0 40px currentColor;
 }
 
 .led-off {
-  @apply bg-opacity-25;
+  @apply bg-opacity-40;
+  filter: brightness(0.8) saturate(0.8);
 }
 
-#red-led .led-on { @apply bg-red-500; }
-#red-led .led-off { @apply bg-red-200; }
+/* Brighter colors for each LED */
+#red-led .led-on { 
+  @apply bg-red-600; 
+  color: rgb(239, 68, 68);
+}
+#red-led .led-off { 
+  @apply bg-red-300;
+}
 
-#green-led .led-on { @apply bg-green-500; }
-#green-led .led-off { @apply bg-green-200; }
+#green-led .led-on { 
+  @apply bg-green-500; 
+  color: rgb(34, 197, 94);
+}
+#green-led .led-off { 
+  @apply bg-green-300;
+}
 
-#blue-led .led-on { @apply bg-blue-500; }
-#blue-led .led-off { @apply bg-blue-200; }
+#blue-led .led-on { 
+  @apply bg-blue-500; 
+  color: rgb(59, 130, 246);
+}
+#blue-led .led-off { 
+  @apply bg-blue-300;
+}
+
+/* Add hover effects */
+#red-led:hover .led-off { @apply bg-red-400; }
+#green-led:hover .led-off { @apply bg-green-400; }
+#blue-led:hover .led-off { @apply bg-blue-400; }
