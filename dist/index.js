@@ -88,8 +88,20 @@ function createSerialConnection(portPath, baudRate, dataHandler) {
 }
 // Create connections for each device
 const environmentalPort = createSerialConnection("/dev/tty.usbmodem21301", 9600, (data) => {
-    environmentalData = Object.assign(Object.assign({}, environmentalData), data);
-    console.log("Environmental Data:", environmentalData);
+    console.log("Raw environmental data received:", data);
+    // Ensure the data matches the expected format
+    if (data.temperature !== undefined ||
+        data.humidity !== undefined ||
+        data.light !== undefined ||
+        data.sound !== undefined) {
+        environmentalData = {
+            temperature: Number(data.temperature) || environmentalData.temperature,
+            humidity: Number(data.humidity) || environmentalData.humidity,
+            light: Number(data.light) || environmentalData.light,
+            sound: Number(data.sound) || environmentalData.sound
+        };
+        console.log("Updated environmental data:", environmentalData);
+    }
 });
 const securityPort = createSerialConnection("/dev/tty.usbmodem21301", 9600, (data) => {
     securityData = Object.assign(Object.assign({}, securityData), data);
@@ -225,6 +237,16 @@ app.get("/light/debug", (_, res) => {
         isOpen: lightPort.isOpen,
         currentState: lightData,
         lastError: lastSerialError
+    });
+});
+// Add debug endpoint for environmental data
+app.get("/monitor/debug", (_, res) => {
+    res.json({
+        environmentalData,
+        portStatus: {
+            isConnected: (environmentalPort === null || environmentalPort === void 0 ? void 0 : environmentalPort.isOpen) || false,
+            portPath: (environmentalPort === null || environmentalPort === void 0 ? void 0 : environmentalPort.path) || 'Not connected',
+        }
     });
 });
 // 404 error handler

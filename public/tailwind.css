@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Add these custom classes */
+.led-on {
+  @apply bg-opacity-100 shadow-lg;
+}
+
+.led-off {
+  @apply bg-opacity-25;
+}
+
+#red-led .led-on { @apply bg-red-500; }
+#red-led .led-off { @apply bg-red-200; }
+
+#green-led .led-on { @apply bg-green-500; }
+#green-led .led-off { @apply bg-green-200; }
+
+#blue-led .led-on { @apply bg-blue-500; }
+#blue-led .led-off { @apply bg-blue-200; }

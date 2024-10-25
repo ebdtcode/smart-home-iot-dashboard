@@ -1,87 +1,106 @@
-#include <Arduino.h>
-#include <ArduinoJson.h>
+#include <DHT.h>
+#include <ArduinoJson.h>  // Add ArduinoJson library for better JSON handling
 
-// Define pins for LEDs and button
-const int redLEDPin = 4;
-const int greenLEDPin = 3;
-const int blueLEDPin = 2;
-const int buttonPin = 8;
+// Sensor configuration for Grove ports
+#define DHT_PORT 2          // Connect DHT sensor to Digital port D2
+#define LIGHT_SENSOR A0     // Connect Light sensor to Analog port A0
+#define SOUND_SENSOR A1     // Connect Sound sensor to Analog port A1
+#define SAMPLE_INTERVAL 2000 // Sampling interval in milliseconds
 
-// Variable to track the current state of the traffic light
-int currentState = 0;
+// Initialize the DHT sensor (DHT11 or DHT22)
+DHT dht(DHT_PORT, DHT11);  // Adjust to DHT22 if needed
+
+// Buffer for JSON document
+StaticJsonDocument<200> doc;
 
 void setup() {
-  Serial.begin(9600);
-  while (!Serial) continue;  // Wait for serial port to connect
-
-  pinMode(redLEDPin, OUTPUT);
-  pinMode(greenLEDPin, OUTPUT);
-  pinMode(blueLEDPin, OUTPUT);
-  pinMode(buttonPin, INPUT_PULLUP); // Use internal pull-up resistor
-
-  // Initialize the traffic light to red
-  digitalWrite(redLEDPin, HIGH);
-  digitalWrite(greenLEDPin, LOW);
-  digitalWrite(blueLEDPin, LOW);
-
-  sendStateToServer();
+  Serial.begin(9600);  // Start serial communication
+  while (!Serial) {    // Wait for serial connection
+    delay(10);
+  }
+  
+  dht.begin();         // Initialize DHT sensor
+  
+  // Initialize analog pins
+  pinMode(LIGHT_SENSOR, INPUT);
+  pinMode(SOUND_SENSOR, INPUT);
+  
+  // Send initial status message
+  Serial.println(F("{\"status\":\"Environmental monitoring system initialized\"}"));
 }
 
 void loop() {
-  static bool lastButtonState = HIGH;
-  bool buttonState = digitalRead(buttonPin);
+  static unsigned long lastReadTime = 0;
+  unsigned long currentTime = millis();
 
-  // Check for button press (transition from HIGH to LOW)
-  if (lastButtonState == HIGH && buttonState == LOW) {
-    // Debounce delay
-    delay(50);
-    buttonState = digitalRead(buttonPin);
-    if (buttonState == LOW) {
-      // Cycle to the next state
-      currentState = (currentState + 1) % 3;
-      updateTrafficLight();
-      sendStateToServer();  // Send the updated state to the server
-    }
+  // Check if it's time to take a new reading
+  if (currentTime - lastReadTime >= SAMPLE_INTERVAL) {
+    readAndSendSensorData();
+    lastReadTime = currentTime;
   }
+}
 
-  lastButtonState = buttonState;
+void readAndSendSensorData() {
+  // Get current timestamp
+  unsigned long currentTime = millis();  // Add this line
   
-  // Send state to server every second, even if there's no change
-  static unsigned long lastSendTime = 0;
-  if (millis() - lastSendTime > 1000) {
-    sendStateToServer();
-    lastSendTime = millis();
+  // Read all sensors
+  float temperature = dht.readTemperature();
+  float humidity = dht.readHumidity();
+  int lightLevel = analogRead(LIGHT_SENSOR);
+  int soundLevel = analogRead(SOUND_SENSOR);
+
+  // Clear previous JSON document
+  doc.clear();
+
+  // Check for DHT sensor errors
+  if (isnan(temperature) || isnan(humidity)) {
+    doc["error"] = F("Failed to read from DHT sensor");
+  } else {
+    // Add sensor readings to JSON document
+    doc["temperature"] = roundToDecimal(temperature, 1);
+    doc["humidity"] = roundToDecimal(humidity, 1);
+    doc["light"] = lightLevel;
+    doc["sound"] = soundLevel;
+    doc["timestamp"] = currentTime;  // Now currentTime is defined
   }
+
+  // Add status information
+  doc["vcc"] = readVcc();
+  doc["uptime"] = currentTime / 1000;  // Convert to seconds
+
+  // Send the JSON data
+  serializeJson(doc, Serial);
+  Serial.println();
 }
 
-void updateTrafficLight() {
-  switch (currentState) {
-    case 0: // Red
-      digitalWrite(redLEDPin, HIGH);
-      digitalWrite(greenLEDPin, LOW);
-      digitalWrite(blueLEDPin, LOW);
-      break;
-    case 1: // Green
-      digitalWrite(redLEDPin, LOW);
-      digitalWrite(greenLEDPin, HIGH);
-      digitalWrite(blueLEDPin, LOW);
-      break;
-    case 2: // Blue
-      digitalWrite(redLEDPin, LOW);
-      digitalWrite(greenLEDPin, LOW);
-      digitalWrite(blueLEDPin, HIGH);
-      break;
-  }
+// Helper function to round floating point numbers
+float roundToDecimal(float value, int decimals) {
+  float multiplier = pow(10.0, decimals);
+  return round(value * multiplier) / multiplier;
 }
 
-void sendStateToServer() {
-  StaticJsonDocument<200> doc;
-  doc["state"] = currentState;
-  doc["buttonState"] = (digitalRead(buttonPin) == LOW) ? 1 : 0;
-  doc["intensity"] = 100;
+// Function to read system voltage
+long readVcc() {
+  #if defined(__AVR_ATmega32U4__) || defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
+    ADMUX = _BV(REFS0) | _BV(MUX4) | _BV(MUX3) | _BV(MUX2) | _BV(MUX1);
+  #elif defined (__AVR_ATtiny24__) || defined(__AVR_ATtiny44__) || defined(__AVR_ATtiny84__)
+    ADMUX = _BV(MUX5) | _BV(MUX0);
+  #elif defined (__AVR_ATtiny25__) || defined(__AVR_ATtiny45__) || defined(__AVR_ATtiny85__)
+    ADMUX = _BV(MUX3) | _BV(MUX2);
+  #else
+    ADMUX = _BV(REFS0) | _BV(MUX3) | _BV(MUX2) | _BV(MUX1);
+  #endif  
 
-  String jsonString;
-  serializeJson(doc, jsonString);
-  Serial.println(jsonString);  // Make sure to use println to add a newline
-  Serial.flush();  // Ensure all data is sent before moving on
+  delay(2); // Wait for Vref to settle
+  ADCSRA |= _BV(ADSC); // Start conversion
+  while (bit_is_set(ADCSRA,ADSC)); // Wait for conversion to complete
+
+  uint8_t low  = ADCL; // must read ADCL first - it then locks ADCH  
+  uint8_t high = ADCH; // unlocks both
+
+  long result = (high<<8) | low;
+
+  result = 1125300L / result; // Calculate Vcc (in mV); 1125300 = 1.1*1023*1000
+  return result; // Vcc in millivolts
 }

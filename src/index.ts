@@ -116,8 +116,20 @@ const environmentalPort = createSerialConnection(
   "/dev/tty.usbmodem21301",
   9600,
   (data) => {
-    environmentalData = { ...environmentalData, ...data };
-    console.log("Environmental Data:", environmentalData);
+    console.log("Raw environmental data received:", data);
+    // Ensure the data matches the expected format
+    if (data.temperature !== undefined || 
+        data.humidity !== undefined || 
+        data.light !== undefined || 
+        data.sound !== undefined) {
+      environmentalData = {
+        temperature: Number(data.temperature) || environmentalData.temperature,
+        humidity: Number(data.humidity) || environmentalData.humidity,
+        light: Number(data.light) || environmentalData.light,
+        sound: Number(data.sound) || environmentalData.sound
+      };
+      console.log("Updated environmental data:", environmentalData);
+    }
   }
 );
 
@@ -283,6 +295,17 @@ app.get("/light/debug", (_, res) => {
     isOpen: lightPort.isOpen,
     currentState: lightData,
     lastError: lastSerialError
+  });
+});
+
+// Add debug endpoint for environmental data
+app.get("/monitor/debug", (_, res) => {
+  res.json({
+    environmentalData,
+    portStatus: {
+      isConnected: environmentalPort?.isOpen || false,
+      portPath: environmentalPort?.path || 'Not connected',
+    }
   });
 });
 

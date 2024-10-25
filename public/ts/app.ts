@@ -72,16 +72,41 @@ function updateSoundLevel(rawValue: number) {
 // Fetch and update environmental dashboard data
 async function fetchEnvironmentalData() {
   try {
+    console.log('Fetching environmental data...');
     const response = await fetch('/data/environment');
     const data: EnvironmentData = await response.json();
-    document.getElementById('temperature')!.textContent = `${data.temperature} °C`;
-    document.getElementById('humidity')!.textContent = `${data.humidity} %`;
-    document.getElementById('light')!.textContent = `${data.light} lux`;
+    console.log('Received environmental data:', data);
+
+    // Update temperature
+    const tempElement = document.getElementById('temperature');
+    if (tempElement) {
+      tempElement.textContent = `${data.temperature.toFixed(1)} °C`;
+      updateTemperatureColor(data.temperature);
+    }
+
+    // Update humidity
+    const humidElement = document.getElementById('humidity');
+    if (humidElement) {
+      humidElement.textContent = `${data.humidity.toFixed(1)} %`;
+      updateHumidityColor(data.humidity);
+    }
+
+    // Update light level
+    const lightElement = document.getElementById('light');
+    if (lightElement) {
+      lightElement.textContent = `${data.light} lux`;
+      updateLightColor(data.light);
+    }
+
+    // Update sound level
     updateSoundLevel(data.sound);
-    updateTemperatureColor(data.temperature);
-    updateHumidityColor(data.humidity);
-    updateLightColor(data.light);
-    document.getElementById('timestamp')!.textContent = new Date().toLocaleString();
+
+    // Update timestamp
+    const timestampElement = document.getElementById('timestamp');
+    if (timestampElement) {
+      timestampElement.textContent = new Date().toLocaleString();
+    }
+
   } catch (error) {
     console.error('Error fetching environmental data:', error);
   }
@@ -198,16 +223,35 @@ function initializeLightDashboard() {
   setInterval(fetchLightData, 1000); // Then fetch every second
 }
 
+// Initialize the appropriate dashboard based on the current page
+function initializeDashboard() {
+  const currentPath = window.location.pathname;
+  console.log('Initializing dashboard for path:', currentPath);
+
+  switch (currentPath) {
+    case '/monitor':
+      console.log('Starting environmental monitoring');
+      fetchEnvironmentalData(); // Initial fetch
+      setInterval(fetchEnvironmentalData, 1000); // Update every second
+      break;
+    
+    case '/home':
+      console.log('Starting security monitoring');
+      fetchSecurityData(); // Initial fetch
+      setInterval(fetchSecurityData, 1000); // Update every second
+      break;
+    
+    case '/light':
+      console.log('Starting light monitoring');
+      initializeLightDashboard();
+      break;
+  }
+}
+
+// Update the DOMContentLoaded event listener
 document.addEventListener('DOMContentLoaded', () => {
   console.log("DOM fully loaded and parsed");
-  const lightDashboard = document.getElementById('traffic-light-card');
-  console.log("Light dashboard element:", lightDashboard); // Add this line
-  if (lightDashboard) {
-    console.log("Light dashboard detected, initializing...");
-    initializeLightDashboard();
-  } else {
-    console.error("Light dashboard not detected");
-  }
+  initializeDashboard();
 });
 
 // Update handleLedClick to include more logging

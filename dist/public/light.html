@@ -67,38 +67,39 @@
     </div>
   </nav>
 
-  <div class="flex-grow container mx-auto p-4 sm:p-8">
+  <main class="flex-grow container mx-auto px-4 py-8">
     <div class="bg-white shadow-2xl rounded-lg p-6">
       <h1 class="text-2xl sm:text-4xl font-bold text-center text-gray-800 mb-6 sm:mb-10">
-        🚦 Smart Traffic Light Control
+        💡 Smart Light Control
       </h1>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
-        <!-- Traffic Light Card -->
-        <div id="traffic-light-card" class="p-6 rounded-lg shadow-lg bg-gradient-to-r from-gray-100 to-gray-300">
-          <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">Traffic Light</h2>
-          <div class="flex flex-col items-center space-y-4">
-            <div id="red-led" class="led bg-red-600 cursor-pointer w-16 h-16 rounded-full" data-state="0" onclick="handleLedClick(0)"></div>
-            <div id="green-led" class="led bg-green-600 cursor-pointer w-16 h-16 rounded-full" data-state="1" onclick="handleLedClick(1)"></div>
-            <div id="blue-led" class="led bg-blue-600 cursor-pointer w-16 h-16 rounded-full" data-state="2" onclick="handleLedClick(2)"></div>
-          </div>
+      <div id="traffic-light-card" class="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
+        <!-- Red LED -->
+        <div id="red-led" class="p-6 rounded-lg shadow-lg cursor-pointer transition-all duration-300">
+          <h2 class="text-xl font-semibold text-gray-800 mb-2">Red LED</h2>
+          <div class="w-16 h-16 rounded-full mx-auto led-off"></div>
         </div>
 
-        <!-- Button State Card -->
-        <div id="button-state-card" class="p-6 rounded-lg shadow-lg bg-gradient-to-r from-green-100 to-green-300">
-          <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-2">Button State</h2>
-          <p class="text-3xl sm:text-5xl font-bold text-gray-900">
-            <span id="button-state">--</span>
-          </p>
+        <!-- Green LED -->
+        <div id="green-led" class="p-6 rounded-lg shadow-lg cursor-pointer transition-all duration-300">
+          <h2 class="text-xl font-semibold text-gray-800 mb-2">Green LED</h2>
+          <div class="w-16 h-16 rounded-full mx-auto led-off"></div>
         </div>
 
-        <!-- Current State Card -->
-        <div id="current-state-card" class="p-6 rounded-lg shadow-lg bg-gradient-to-r from-blue-100 to-blue-300 col-span-1 sm:col-span-2">
-          <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-2">Current State</h2>
-          <p class="text-3xl sm:text-5xl font-bold text-gray-900 text-center">
-            <span id="current-state">--</span>
-          </p>
+        <!-- Blue LED -->
+        <div id="blue-led" class="p-6 rounded-lg shadow-lg cursor-pointer transition-all duration-300">
+          <h2 class="text-xl font-semibold text-gray-800 mb-2">Blue LED</h2>
+          <div class="w-16 h-16 rounded-full mx-auto led-off"></div>
         </div>
+      </div>
+
+      <div class="mt-8">
+        <p class="text-lg">
+          Button State: <span id="button-state" class="font-semibold">--</span>
+        </p>
+        <p class="text-lg">
+          Current State: <span id="current-state" class="font-semibold">--</span>
+        </p>
       </div>
 
       <footer class="flex items-center justify-center space-x-2 mt-8 py-3 px-4 bg-white/50 rounded-lg backdrop-blur-sm">
@@ -109,7 +110,7 @@
         <span id="timestamp" class="text-sm font-semibold text-indigo-600">--</span>
       </footer>
     </div>
-  </div>
+  </main>
 
   <footer class="bg-white shadow-lg mt-8">
     <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
