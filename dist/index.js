@@ -57,16 +57,16 @@ function createSerialConnection(portPath, baudRate, dataHandler) {
 }
 // Create connections for each device
 const environmentalPort = createSerialConnection("/dev/tty.usbmodem21201", 9600, (data) => {
-    environmentalData = { ...environmentalData, ...data };
+    environmentalData = Object.assign(Object.assign({}, environmentalData), data);
     console.log("Environmental Data:", environmentalData);
 });
 const securityPort = createSerialConnection("/dev/tty.usbmodem214201", 9600, (data) => {
-    securityData = { ...securityData, ...data };
+    securityData = Object.assign(Object.assign({}, securityData), data);
     console.log("Security Data:", securityData);
 });
 const lightPort = createSerialConnection("/dev/tty.usbmodem214201", // Updated to the correct port
 9600, (data) => {
-    lightData = { ...lightData, ...data };
+    lightData = Object.assign(Object.assign({}, lightData), data);
     console.log("Updated Light Data:", lightData);
 });
 // Middleware for CORS and static files

@@ -15,7 +15,8 @@ class Navigation {
         this.setupEventListeners();
     }
     setupEventListeners() {
-        this.elements.menuButton?.addEventListener('click', this.toggleMenu.bind(this));
+        var _a;
+        (_a = this.elements.menuButton) === null || _a === void 0 ? void 0 : _a.addEventListener('click', this.toggleMenu.bind(this));
         document.addEventListener('click', this.handleClickOutside.bind(this));
     }
     toggleMenu() {

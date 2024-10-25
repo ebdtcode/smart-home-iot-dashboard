@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 // Convert raw sound sensor value to decibels (dB)
 function convertToDecibels(rawValue) {
     const voltage = (rawValue / 1023.0) * 5.0; // Assuming 5V reference
@@ -54,35 +63,39 @@ function updateSoundLevel(rawValue) {
     document.getElementById('sound-level').textContent = `${soundLevel} dB`;
 }
 // Fetch and update environmental dashboard data
-async function fetchEnvironmentalData() {
-    try {
-        const response = await fetch('/data/environment');
-        const data = await response.json();
-        document.getElementById('temperature').textContent = `${data.temperature} °C`;
-        document.getElementById('humidity').textContent = `${data.humidity} %`;
-        document.getElementById('light').textContent = `${data.light} lux`;
-        updateSoundLevel(data.sound);
-        updateTemperatureColor(data.temperature);
-        updateHumidityColor(data.humidity);
-        updateLightColor(data.light);
-        document.getElementById('timestamp').textContent = new Date().toLocaleString();
-    }
-    catch (error) {
-        console.error('Error fetching environmental data:', error);
-    }
+function fetchEnvironmentalData() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const response = yield fetch('/data/environment');
+            const data = yield response.json();
+            document.getElementById('temperature').textContent = `${data.temperature} °C`;
+            document.getElementById('humidity').textContent = `${data.humidity} %`;
+            document.getElementById('light').textContent = `${data.light} lux`;
+            updateSoundLevel(data.sound);
+            updateTemperatureColor(data.temperature);
+            updateHumidityColor(data.humidity);
+            updateLightColor(data.light);
+            document.getElementById('timestamp').textContent = new Date().toLocaleString();
+        }
+        catch (error) {
+            console.error('Error fetching environmental data:', error);
+        }
+    });
 }
 // Fetch and update security dashboard data
-async function fetchSecurityData() {
-    try {
-        const response = await fetch('/data/security');
-        const data = await response.json();
-        updateMotionStatus(data.motion, data.led);
-        updateSoundLevel(data.sound);
-        document.getElementById('timestamp').textContent = new Date().toLocaleString();
-    }
-    catch (error) {
-        console.error('Error fetching security data:', error);
-    }
+function fetchSecurityData() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const response = yield fetch('/data/security');
+            const data = yield response.json();
+            updateMotionStatus(data.motion, data.led);
+            updateSoundLevel(data.sound);
+            document.getElementById('timestamp').textContent = new Date().toLocaleString();
+        }
+        catch (error) {
+            console.error('Error fetching security data:', error);
+        }
+    });
 }
 // Update light dashboard
 function updateLightDashboard(data) {
@@ -153,16 +166,18 @@ function updateLightDashboard(data) {
     }
 }
 // Fetch and update smart light data
-async function fetchLightData() {
-    try {
-        const response = await fetch('/data/light');
-        const data = await response.json();
-        console.log("Fetched light data:", data); // Add this line
-        updateLightDashboard(data);
-    }
-    catch (error) {
-        console.error('Error fetching light data:', error);
-    }
+function fetchLightData() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const response = yield fetch('/data/light');
+            const data = yield response.json();
+            console.log("Fetched light data:", data); // Add this line
+            updateLightDashboard(data);
+        }
+        catch (error) {
+            console.error('Error fetching light data:', error);
+        }
+    });
 }
 function initializeLightDashboard() {
     console.log("Initializing light dashboard");
@@ -172,6 +187,7 @@ function initializeLightDashboard() {
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM fully loaded and parsed");
     const lightDashboard = document.getElementById('traffic-light-card');
+    console.log("Light dashboard element:", lightDashboard); // Add this line
     if (lightDashboard) {
         console.log("Light dashboard detected, initializing...");
         initializeLightDashboard();

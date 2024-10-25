@@ -172,6 +172,7 @@ function initializeLightDashboard() {
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM fully loaded and parsed");
     const lightDashboard = document.getElementById('traffic-light-card');
+    console.log("Light dashboard element:", lightDashboard); // Add this line
     if (lightDashboard) {
         console.log("Light dashboard detected, initializing...");
         initializeLightDashboard();
