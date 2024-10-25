@@ -111,10 +111,10 @@ app.use(express.static(path.join(__dirname, '../dist/public')));
 app.use('/js', express.static(path.join(__dirname, '../dist/public/js')));
 
 // Routes for HTML pages
-app.get("/", (_, res) => res.sendFile(path.join(__dirname, "../public/index.html")));
-app.get("/home", (_, res) => res.sendFile(path.join(__dirname, "../public/home.html")));
-app.get("/monitor", (_, res) => res.sendFile(path.join(__dirname, "../public/monitor.html")));
-app.get("/light", (_, res) => res.sendFile(path.join(__dirname, "../public/light.html")));
+app.get("/", (_, res) => res.sendFile(path.join(__dirname, "../dist/public/index.html")));
+app.get("/home", (_, res) => res.sendFile(path.join(__dirname, "../dist/public/home.html")));
+app.get("/monitor", (_, res) => res.sendFile(path.join(__dirname, "../dist/public/monitor.html")));
+app.get("/light", (_, res) => res.sendFile(path.join(__dirname, "../dist/public/light.html")));
 
 // API routes to fetch data
 app.get("/data/environment", (_, res) => {

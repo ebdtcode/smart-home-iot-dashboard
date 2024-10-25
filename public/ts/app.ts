@@ -152,7 +152,14 @@ function updateLightDashboard(data: LightData) {
 
   const timestampElement = document.getElementById('timestamp');
   if (timestampElement) {
-    timestampElement.textContent = new Date().toLocaleString();
+    const now = new Date();
+    const formattedTime = new Intl.DateTimeFormat('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true
+    }).format(now);
+    timestampElement.textContent = formattedTime;
   } else {
     console.error("Timestamp element not found");
   }

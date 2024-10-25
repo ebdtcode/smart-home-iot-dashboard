@@ -74,10 +74,10 @@ app.use((0, cors_1.default)());
 app.use(express_1.default.static(path_1.default.join(__dirname, '../dist/public')));
 app.use('/js', express_1.default.static(path_1.default.join(__dirname, '../dist/public/js')));
 // Routes for HTML pages
-app.get("/", (_, res) => res.sendFile(path_1.default.join(__dirname, "../public/index.html")));
-app.get("/home", (_, res) => res.sendFile(path_1.default.join(__dirname, "../public/home.html")));
-app.get("/monitor", (_, res) => res.sendFile(path_1.default.join(__dirname, "../public/monitor.html")));
-app.get("/light", (_, res) => res.sendFile(path_1.default.join(__dirname, "../public/light.html")));
+app.get("/", (_, res) => res.sendFile(path_1.default.join(__dirname, "../dist/public/index.html")));
+app.get("/home", (_, res) => res.sendFile(path_1.default.join(__dirname, "../dist/public/home.html")));
+app.get("/monitor", (_, res) => res.sendFile(path_1.default.join(__dirname, "../dist/public/monitor.html")));
+app.get("/light", (_, res) => res.sendFile(path_1.default.join(__dirname, "../dist/public/light.html")));
 // API routes to fetch data
 app.get("/data/environment", (_, res) => {
     console.log("Sending environmental data:", environmentalData);
@@ -106,4 +106,3 @@ app.listen(PORT, () => {
     console.log("Security:", securityPort ? "Connected" : "Not connected");
     console.log("Light:", lightPort ? "Connected" : "Not connected");
 });
-//# sourceMappingURL=index.js.map
