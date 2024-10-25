@@ -77,10 +77,10 @@
         <!-- Traffic Light Card -->
         <div id="traffic-light-card" class="p-6 rounded-lg shadow-lg bg-gradient-to-r from-gray-100 to-gray-300">
           <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">Traffic Light</h2>
-          <div class="flex flex-col items-center">
-            <div id="red-led" class="led bg-red-600 led-off"></div>
-            <div id="green-led" class="led bg-green-600 led-off"></div>
-            <div id="blue-led" class="led bg-blue-600 led-off"></div>
+          <div class="flex flex-col items-center space-y-4">
+            <div id="red-led" class="led bg-red-600 cursor-pointer w-16 h-16 rounded-full" data-state="0" onclick="handleLedClick(0)"></div>
+            <div id="green-led" class="led bg-green-600 cursor-pointer w-16 h-16 rounded-full" data-state="1" onclick="handleLedClick(1)"></div>
+            <div id="blue-led" class="led bg-blue-600 cursor-pointer w-16 h-16 rounded-full" data-state="2" onclick="handleLedClick(2)"></div>
           </div>
         </div>
 

@@ -181,6 +181,19 @@ function fetchLightData() {
 }
 function initializeLightDashboard() {
     console.log("Initializing light dashboard");
+    // Add click event listeners to LED elements
+    const redLed = document.getElementById('red-led');
+    const greenLed = document.getElementById('green-led');
+    const blueLed = document.getElementById('blue-led');
+    if (redLed && greenLed && blueLed) {
+        redLed.addEventListener('click', () => handleLedClick(0));
+        greenLed.addEventListener('click', () => handleLedClick(1));
+        blueLed.addEventListener('click', () => handleLedClick(2));
+        console.log("LED click handlers attached");
+    }
+    else {
+        console.error("Could not find LED elements");
+    }
     fetchLightData(); // Fetch immediately
     setInterval(fetchLightData, 1000); // Then fetch every second
 }
@@ -196,3 +209,34 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error("Light dashboard not detected");
     }
 });
+// Update handleLedClick to include more logging
+function handleLedClick(state) {
+    return __awaiter(this, void 0, void 0, function* () {
+        console.log(`LED clicked with state: ${state}`);
+        try {
+            const response = yield fetch('/light/setState', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ state })
+            });
+            console.log('Response status:', response.status);
+            if (response.ok) {
+                const data = yield response.json();
+                console.log('Response data:', data);
+                updateLightDashboard(data);
+            }
+            else {
+                console.error('Server returned error:', response.status);
+            }
+        }
+        catch (error) {
+            console.error('Error setting light state:', error);
+        }
+    });
+}
+// Make handleLedClick available globally
+window.handleLedClick = handleLedClick;
+// Make handleLedClick available globally
+window.handleLedClick = handleLedClick;
