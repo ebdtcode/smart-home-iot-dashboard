@@ -1,0 +1,39 @@
+
+> grove-serial-server@1.0.0 start
+> node dist/src/index.js
+
+Server running at http://localhost:3000
+Serial port status:
+Environmental: Connected
+Security: Connected
+Light: Connected
+Raw data received from /dev/tty.usbmodem214201: tensity":100}
+Raw data received from /dev/tty.usbmodem214201: {"state":1,"buttonState":1,"intensity":100}
+Raw data received from /dev/tty.usbmodem214201: {"state":1,"buttonState":1,"intensity":100}
+Raw data received from /dev/tty.usbmodem21301: 0,"light":395,"sound":156,"timestamp":18391}
+Raw data received from /dev/tty.usbmodem21301: 0,"light":381,"sound":170,"timestamp":16349}
+Raw data received from /dev/tty.usbmodem21301: {"temperature":27.50,"humidity":47.00,"light":395,"sound":156,"timestamp":18391}
+Raw data received from /dev/tty.usbmodem21301: 0,"light":381,"sound":170,"timestamp":16349}
+Raw data received from /dev/tty.usbmodem21301: {"temperature":27.50,"humidity":47.00,"light":395,"sound":156,"timestamp":18391}
+Raw data received from /dev/tty.usbmodem214201: {"state":0,"buttonState":1,"intensity":100}
+Raw data received from /dev/tty.usbmodem21301: {"temperature":27.50,"humidity":47.00,"light":372,"sound":141,"timestamp":22}
+Raw data received from /dev/tty.usbmodem214201: {"state":1,"buttonState":1,"intensity":100}
+Raw data received from /dev/tty.usbmodem214201: {"state":1,"buttonState":1,"intensity":100}
+Raw data received from /dev/tty.usbmodem214201: {"state":1,"buttonState":1,"intensity":100}
+Raw data received from /dev/tty.usbmodem21301: {"temperature":27.50,"humidity":47.00,"light":367,"sound":160,"timestamp":2061}
+Raw data received from /dev/tty.usbmodem214201: {"state":1,"buttonState":1,"intensity":100}
+Raw data received from /dev/tty.usbmodem214201: {"state":1,"buttonState":1,"intensity":100}
+Raw data received from /dev/tty.usbmodem21301: {"temperature":27.40,"humidity":47.00,"light":368,"sound":142,"timestamp":4102}
+Raw data received from /dev/tty.usbmodem214201: {"state":1,"buttonState":1,"intensity":100}
+Raw data received from /dev/tty.usbmodem21301: {"temperature":27.40,"humidity":47.00,"light":374,"sound":181,"timestamp":6141}
+Raw data received from /dev/tty.usbmodem214201: {"state":1,"buttonState":1,"intensity":100}
+Raw data received from /dev/tty.usbmodem214201: {"state":1,"buttonState":1,"intensity":100}
+Raw data received from /dev/tty.usbmodem21301: {"temperature":27.50,"humidity":47.00,"light":384,"sound":165,"timestamp":8182}
+Raw data received from /dev/tty.usbmodem214201: {"state":1,"buttonState":1,"intensity":100}
+Raw data received from /dev/tty.usbmodem214201: {"state":1,"buttonState":1,"intensity":100}
+Raw data received from /dev/tty.usbmodem21301: {"temperature":27.50,"humidity":47.00,"light":393,"sound":150,"timestamp":10222}
+Raw data received from /dev/tty.usbmodem214201: {"state":1,"buttonState":1,"intensity":100}
+Raw data received from /dev/tty.usbmodem214201: {"state":1,"buttonState":1,"intensity":100}
+Raw data received from /dev/tty.usbmodem21301: {"temperature":27.50,"humidity":47.00,"light":388,"sound":163,"timestamp":12264}
+Raw data received from /dev/tty.usbmodem214201: {"state":1,"buttonState":1,"intensity":100}
+Raw data received from /dev/tty.usbmodem214201: {"state":1,"buttonState":1,"intensity":100}

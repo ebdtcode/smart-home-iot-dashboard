@@ -1,12 +1,30 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "module": "commonjs",
-    "outDir": "./dist",             // Output directory for compiled JS files
-    "rootDir": ".",                 // Root directory for source files
+    "target": "ES2015",
+    "module": "ES2015",
+    "moduleResolution": "node",
     "strict": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+    "declaration": true,
+    "declarationDir": "./dist/types",
+    "rootDir": ".",
+    "baseUrl": ".",
+    "paths": {
+      "*": ["node_modules/*"]
+    },
+    "composite": true
   },
-  "include": ["src/**/*.ts", "public/**/*.ts"],  // Include both backend and frontend TypeScript
-  "exclude": ["node_modules", "dist"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"],
+  "references": [
+    {
+      "path": "./tsconfig.frontend.json"
+    },
+    {
+      "path": "./tsconfig.backend.json"
+    }
+  ]
 }

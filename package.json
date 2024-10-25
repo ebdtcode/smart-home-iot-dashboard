@@ -2,16 +2,21 @@
   "name": "grove-serial-server",
   "version": "1.0.0",
   "scripts": {
-  "build:css": "npx tailwindcss -i ./public/tailwind.css -o ./dist/public/tailwind.css --minify",
-  "dev:css": "npx tailwindcss -i ./public/tailwind.css -o ./dist/public/tailwind.css --watch --poll",
-  "build:ts": "tsc",
-  "build:html": "mkdir -p dist/public && cp public/*.html dist/public",
-  "build": "npm run build:css && npm run build:ts && npm run build:html",
-  "dev": "concurrently \"npm run dev:css\" \"npm run build:ts -- --watch\" \"npm run dev:server\"",
-  "dev:server": "nodemon dist/src/index.js --watch dist/src",
-  "start": "node dist/src/index.js"
-},
-
+    "clean": "rm -rf dist public/js && mkdir -p dist/public/js",
+    "build:css": "npx tailwindcss -i ./public/tailwind.css -o ./dist/public/tailwind.css --minify",
+    "build:ts:backend": "tsc -p tsconfig.backend.json",
+    "build:ts:frontend": "tsc -p tsconfig.frontend.json",
+    "build:html": "cp -r public/*.html dist/public/",
+    "copy:frontend": "cp -r public/js/* dist/public/js/",
+    "prebuild": "npm run clean",
+    "build": "npm run build:ts:backend && npm run build:ts:frontend && npm run build:css && npm run build:html && npm run copy:frontend",
+    "start": "node dist/index.js",
+    "dev": "concurrently \"npm run dev:css\" \"npm run watch:backend\" \"npm run watch:frontend\" \"npm run dev:server\"",
+    "dev:server": "nodemon dist/index.js",
+    "dev:css": "tailwindcss -i ./public/tailwind.css -o ./dist/public/tailwind.css --watch",
+    "watch:frontend": "tsc -p tsconfig.frontend.json --watch",
+    "watch:backend": "tsc -p tsconfig.backend.json --watch"
+  },
   "dependencies": {
     "express": "^4.18.2",
     "serialport": "^11.0.0"
@@ -19,10 +24,10 @@
   "devDependencies": {
     "@types/express": "^4.17.13",
     "browser-sync": "^3.0.3",
-    "concurrently": "^9.0.1",
+    "concurrently": "^8.0.0",
     "nodemon": "^3.1.7",
     "shelljs": "^0.8.5",
     "tailwindcss": "^3.0.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.6.3"
   }
 }
