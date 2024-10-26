@@ -7,20 +7,20 @@ exports.PORT_CONFIG = {
     DEFAULT_TIMEOUT: 1000,
 };
 const getPortPath = (deviceType) => {
-    const base = process.platform === 'win32'
-        ? 'COM'
-        : process.platform === 'darwin'
-            ? '/dev/tty.usbmodem'
-            : '/dev/ttyACM';
-    switch (deviceType) {
-        case 'environmental':
-            return `${base}21301`;
-        case 'security':
-            return `${base}1101`;
-        case 'light':
-            return `${base}101`;
+    const deviceId = {
+        environmental: '21301',
+        security: '1101',
+        light: '101'
+    }[deviceType] || '0';
+    switch (process.platform) {
+        case 'win32':
+            return `COM${deviceId}`;
+        case 'darwin':
+            return `/dev/tty.usbmodem${deviceId}`;
+        case 'linux':
+            return `/dev/ttyACM${deviceId}`;
         default:
-            return `${base}0`;
+            return `/dev/ttyACM${deviceId}`;
     }
 };
 exports.getPortPath = getPortPath;

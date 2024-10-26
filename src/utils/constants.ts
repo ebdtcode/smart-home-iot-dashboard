@@ -5,21 +5,21 @@ export const PORT_CONFIG = {
 };
 
 export const getPortPath = (deviceType: 'environmental' | 'security' | 'light'): string => {
-  const base = process.platform === 'win32' 
-    ? 'COM'
-    : process.platform === 'darwin'
-    ? '/dev/tty.usbmodem'
-    : '/dev/ttyACM';
+  const deviceId = {
+    environmental: '21301',
+    security: '1101',
+    light: '101'
+  }[deviceType] || '0';
 
-  switch (deviceType) {
-    case 'environmental':
-      return `${base}21301`;
-    case 'security':
-      return `${base}1101`;
-    case 'light':
-      return `${base}101`;
+  switch (process.platform) {
+    case 'win32':
+      return `COM${deviceId}`;
+    case 'darwin':
+      return `/dev/tty.usbmodem${deviceId}`;
+    case 'linux':
+      return `/dev/ttyACM${deviceId}`;
     default:
-      return `${base}0`;
+      return `/dev/ttyACM${deviceId}`;
   }
 };
 
