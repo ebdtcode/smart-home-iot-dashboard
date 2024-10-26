@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "clean:dist": "del-cli dist/**/*",
-    "make:dirs": "mkdirp dist/public/js",
+    "make:dirs": "mkdirp dist && mkdirp dist/public && mkdirp dist/public/js",
     "clean": "npm run clean:dist && npm run make:dirs",
     "build:ts:backend": "tsc --project tsconfig.backend.json",
     "build:ts:frontend": "tsc --project tsconfig.frontend.json",
