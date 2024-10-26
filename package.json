@@ -8,7 +8,7 @@
     "build:ts:backend": "tsc --project tsconfig.backend.json",
     "build:ts:frontend": "tsc --project tsconfig.frontend.json",
     "build:css": "tailwindcss -i ./public/tailwind.css -o ./dist/public/tailwind.css --minify",
-    "build:html": "copyfiles \"public/*.html\" dist/public",
+    "build:html": "copyfiles -f \"public/*.html\" dist/public",
     "watch:css": "tailwindcss -i ./public/tailwind.css -o ./dist/public/tailwind.css --watch",
     "watch:ts": "tsc --project tsconfig.frontend.json --watch",
     "prebuild": "npm run clean",
