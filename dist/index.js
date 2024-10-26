@@ -38,7 +38,7 @@ app.use(express_1.default.json());
 app.use(express_1.default.static(path_1.default.join(__dirname, '../dist/public')));
 app.use('/js', express_1.default.static(path_1.default.join(__dirname, '../dist/public/js')));
 // Routes
-app.use('/light', (0, lightRoutes_1.createLightRoutes)(dataService, lightPortManager));
+app.use('/data/light', (0, lightRoutes_1.createLightRoutes)(dataService, lightPortManager));
 app.use('/data', (0, environmentalRoutes_1.createEnvironmentalRoutes)(dataService));
 app.use('/data', (0, securityRoutes_1.createSecurityRoutes)(dataService)); // Changed from '/home'
 // HTML routes

@@ -237,9 +237,20 @@ function updateLEDStates(state: number) {
 // Fetch and update smart light data
 async function fetchLightData() {
   try {
-    const response = await fetch('/data/light');
+    console.log('Fetching light data...');
+    const response = await fetch('/data/light/data');
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
     const data: LightData = await response.json();
-    console.log("Fetched light data:", data);  // Add this line
+    console.log("Fetched light data:", data);
+    
+    if (!data) {
+      throw new Error('No data received');
+    }
+    
     updateLightDashboard(data);
   } catch (error) {
     console.error('Error fetching light data:', error);
@@ -302,7 +313,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function handleLedClick(state: number) {
   console.log(`LED clicked with state: ${state}`);
   try {
-    const response = await fetch('/light/setState', {
+    const response = await fetch('/data/light/setState', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

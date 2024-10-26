@@ -207,9 +207,16 @@ function updateLEDStates(state) {
 function fetchLightData() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield fetch('/data/light');
+            console.log('Fetching light data...');
+            const response = yield fetch('/data/light/data');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
             const data = yield response.json();
-            console.log("Fetched light data:", data); // Add this line
+            console.log("Fetched light data:", data);
+            if (!data) {
+                throw new Error('No data received');
+            }
             updateLightDashboard(data);
         }
         catch (error) {
@@ -266,7 +273,7 @@ function handleLedClick(state) {
     return __awaiter(this, void 0, void 0, function* () {
         console.log(`LED clicked with state: ${state}`);
         try {
-            const response = yield fetch('/light/setState', {
+            const response = yield fetch('/data/light/setState', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

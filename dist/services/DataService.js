@@ -72,7 +72,13 @@ class DataService {
         }
     }
     getLightData() {
-        return this.lightData;
+        return {
+            state: this.lightData.state,
+            buttonState: this.lightData.buttonState,
+            intensity: this.lightData.intensity,
+            timestamp: this.lightData.timestamp,
+            status: this.lightData.status
+        };
     }
     getLightStatus() {
         var _a;

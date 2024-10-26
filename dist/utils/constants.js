@@ -16,9 +16,9 @@ const getPortPath = (deviceType) => {
         case 'environmental':
             return `${base}21301`;
         case 'security':
-            return `${base}21201`;
-        case 'light':
             return `${base}1101`;
+        case 'light':
+            return `${base}101`;
         default:
             return `${base}0`;
     }

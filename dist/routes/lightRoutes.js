@@ -13,32 +13,31 @@ exports.createLightRoutes = createLightRoutes;
 const express_1 = require("express");
 function createLightRoutes(dataService, serialManager) {
     const router = (0, express_1.Router)();
-    router.get("/data/light", (_, res) => {
+    // Add GET endpoint for light data
+    router.get('/data', (req, res) => {
         try {
-            const data = dataService.getLightData();
-            console.log("Sending light data:", data);
-            res.json(data);
+            const lightData = dataService.getLightData();
+            res.json(lightData);
         }
         catch (error) {
             console.error('Error getting light data:', error);
             res.status(500).json({ error: 'Failed to get light data' });
         }
     });
-    router.post("/setState", (req, res) => __awaiter(this, void 0, void 0, function* () {
+    // Update the setState endpoint
+    router.post('/setState', (req, res) => __awaiter(this, void 0, void 0, function* () {
         try {
             const { state } = req.body;
-            console.log(`Received setState request for state: ${state}`);
+            if (typeof state !== 'number' || state < 0 || state > 2) {
+                return res.status(400).json({ error: 'Invalid state value' });
+            }
             yield serialManager.write(`${state}\n`);
-            console.log(`Sent state ${state} to Arduino`);
-            // Wait briefly for Arduino to process
-            yield new Promise(resolve => setTimeout(resolve, 100));
-            const currentData = dataService.getLightData();
-            console.log(`Responding with current data:`, currentData);
-            res.json(currentData);
+            const lightData = dataService.getLightData();
+            res.json(lightData);
         }
         catch (error) {
-            console.error('Error in setState:', error);
-            res.status(500).json({ error: 'Failed to set state' });
+            console.error('Error setting light state:', error);
+            res.status(500).json({ error: 'Failed to set light state' });
         }
     }));
     router.get("/status", (_, res) => {
