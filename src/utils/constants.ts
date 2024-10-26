@@ -4,23 +4,27 @@ export const PORT_CONFIG = {
   DEFAULT_TIMEOUT: 1000,
 };
 
-export const getPortPath = (deviceType: 'environmental' | 'security' | 'light'): string => {
-  const deviceId = {
-    environmental: '21301',
-    security: '1101',
-    light: '101'
-  }[deviceType] || '0';
-
-  switch (process.platform) {
-    case 'win32':
-      return `COM${deviceId}`;
-    case 'darwin':
-      return `/dev/tty.usbmodem${deviceId}`;
-    case 'linux':
-      return `/dev/ttyACM${deviceId}`;
-    default:
-      return `/dev/ttyACM${deviceId}`;
+export const PORT_MAPPINGS = {
+  environmental: {
+    win32: 'COM4',
+    darwin: '/dev/tty.usbmodem21301',
+    linux: '/dev/ttyACM0'
+  },
+  security: {
+    win32: 'COM5',
+    darwin: '/dev/tty.usbmodem1101',
+    linux: '/dev/ttyACM1'
+  },
+  light: {
+    win32: 'COM6',
+    darwin: '/dev/tty.usbmodem101',
+    linux: '/dev/ttyACM2'
   }
+};
+
+export const getPortPath = (deviceType: 'environmental' | 'security' | 'light'): string => {
+  const platform = process.platform as 'win32' | 'darwin' | 'linux';
+  return PORT_MAPPINGS[deviceType][platform] || PORT_MAPPINGS[deviceType]['linux'];
 };
 
 export const ERROR_MESSAGES = {
