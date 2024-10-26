@@ -273,22 +273,17 @@ function handleLedClick(state) {
                 },
                 body: JSON.stringify({ state })
             });
-            console.log('Response status:', response.status);
-            if (response.ok) {
-                const data = yield response.json();
-                console.log('Response data:', data);
-                updateLightDashboard(data);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-            else {
-                console.error('Server returned error:', response.status);
-            }
+            const data = yield response.json();
+            console.log('Response from server:', data);
+            updateLightDashboard(data);
         }
         catch (error) {
             console.error('Error setting light state:', error);
         }
     });
 }
-// Make handleLedClick available globally
-window.handleLedClick = handleLedClick;
 // Make handleLedClick available globally
 window.handleLedClick = handleLedClick;

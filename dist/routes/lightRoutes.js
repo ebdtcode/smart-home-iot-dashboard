@@ -25,22 +25,20 @@ function createLightRoutes(dataService, serialManager) {
         }
     });
     router.post("/setState", (req, res) => __awaiter(this, void 0, void 0, function* () {
-        const { state } = req.body;
-        console.log('Received state change request:', state);
-        if (!serialManager.isReady()) {
-            return res.status(500).json({ error: 'Arduino not connected' });
-        }
-        if (typeof state !== 'number' || state < 0 || state > 2) {
-            return res.status(400).json({ error: 'Invalid state' });
-        }
         try {
+            const { state } = req.body;
+            console.log(`Received setState request for state: ${state}`);
             yield serialManager.write(`${state}\n`);
-            const updatedData = dataService.updateLightState(state);
-            res.json(updatedData);
+            console.log(`Sent state ${state} to Arduino`);
+            // Wait briefly for Arduino to process
+            yield new Promise(resolve => setTimeout(resolve, 100));
+            const currentData = dataService.getLightData();
+            console.log(`Responding with current data:`, currentData);
+            res.json(currentData);
         }
         catch (error) {
-            console.error('Write error:', error);
-            res.status(500).json({ error: 'Failed to write to Arduino' });
+            console.error('Error in setState:', error);
+            res.status(500).json({ error: 'Failed to set state' });
         }
     }));
     router.get("/status", (_, res) => {

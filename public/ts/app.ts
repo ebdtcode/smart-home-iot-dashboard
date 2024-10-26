@@ -310,15 +310,13 @@ async function handleLedClick(state: number) {
       body: JSON.stringify({ state })
     });
     
-    console.log('Response status:', response.status);
-    
-    if (response.ok) {
-      const data: LightData = await response.json();
-      console.log('Response data:', data);
-      updateLightDashboard(data);
-    } else {
-      console.error('Server returned error:', response.status);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+    
+    const data = await response.json();
+    console.log('Response from server:', data);
+    updateLightDashboard(data);
   } catch (error) {
     console.error('Error setting light state:', error);
   }
@@ -326,7 +324,3 @@ async function handleLedClick(state: number) {
 
 // Make handleLedClick available globally
 (window as any).handleLedClick = handleLedClick;
-
-// Make handleLedClick available globally
-(window as any).handleLedClick = handleLedClick;
-

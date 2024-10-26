@@ -2,9 +2,9 @@
 #include <ArduinoJson.h>
 
 // Define pins for LEDs and button
-const int redLEDPin = 4;
-const int greenLEDPin = 3;
-const int blueLEDPin = 2;
+const int redLEDPin = 4;    // Verify this matches your physical connection
+const int greenLEDPin = 3;  // Verify this matches your physical connection
+const int blueLEDPin = 2;   // Verify this matches your physical connection
 const int buttonPin = 8;
 
 // Variable to track the current state of the traffic light
@@ -18,10 +18,16 @@ void setup() {
     ; // wait for serial port to connect. Needed for native USB
   }
   
+  // Set pin modes
   pinMode(redLEDPin, OUTPUT);
   pinMode(greenLEDPin, OUTPUT);
   pinMode(blueLEDPin, OUTPUT);
   pinMode(buttonPin, INPUT_PULLUP);
+  
+  // Initially turn off all LEDs
+  digitalWrite(redLEDPin, LOW);
+  digitalWrite(greenLEDPin, LOW);
+  digitalWrite(blueLEDPin, LOW);
   
   // Send initial state
   Serial.println("Arduino Ready");
@@ -29,40 +35,64 @@ void setup() {
 }
 
 void loop() {
-  // Check for serial commands
   if (Serial.available() > 0) {
     String input = Serial.readStringUntil('\n');
-    Serial.print("DEBUG: Received command: ");
-    Serial.println(input);
+    input.trim();
     
-    currentState = input.toInt();
-    Serial.print("DEBUG: Setting state to: ");
-    Serial.println(currentState);
+    // Enhanced debugging
+    Serial.println("-------------------");
+    Serial.print("Received raw input: '");
+    Serial.print(input);
+    Serial.println("'");
     
-    updateTrafficLight();
-    sendStateToServer();
+    // Ensure valid state conversion
+    int newState = input.toInt();
+    Serial.print("Converted to number: ");
+    Serial.println(newState);
     
-    // Confirm the state change
-    Serial.print("DEBUG: State changed to: ");
-    Serial.println(currentState);
+    if (newState >= 0 && newState <= 2) {
+      // Force all LEDs off first
+      digitalWrite(redLEDPin, LOW);
+      digitalWrite(greenLEDPin, LOW);
+      digitalWrite(blueLEDPin, LOW);
+      
+      currentState = newState;
+      
+      // Debug pin states
+      Serial.print("Setting new state: ");
+      Serial.println(currentState);
+      
+      updateTrafficLight();
+      
+      // Verify pin states
+      Serial.print("Red Pin State: ");
+      Serial.println(digitalRead(redLEDPin));
+      Serial.print("Green Pin State: ");
+      Serial.println(digitalRead(greenLEDPin));
+      Serial.print("Blue Pin State: ");
+      Serial.println(digitalRead(blueLEDPin));
+      
+      sendStateToServer();
+    } else {
+      Serial.println("Invalid state received");
+    }
+    Serial.println("-------------------");
   }
-
+  
+  // Remove any delay here if present
+  // Only handle button press and state updates
   static bool lastButtonState = HIGH;
   bool buttonState = digitalRead(buttonPin);
 
-  // Check for button press (transition from HIGH to LOW)
   if (lastButtonState == HIGH && buttonState == LOW) {
-    // Debounce delay
-    delay(50);
+    delay(50); // Debounce
     buttonState = digitalRead(buttonPin);
     if (buttonState == LOW) {
-      // Cycle to the next state
       currentState = (currentState + 1) % 3;
       updateTrafficLight();
-      sendStateToServer();  // Send the updated state to the server
+      sendStateToServer();
     }
   }
-
   lastButtonState = buttonState;
   
   // Send state to server every second, even if there's no change
@@ -74,29 +104,31 @@ void loop() {
 }
 
 void updateTrafficLight() {
-  Serial.print("DEBUG: Updating LEDs for state: ");
-  Serial.println(currentState);
+  // First, ensure all LEDs are off
+  digitalWrite(redLEDPin, LOW);
+  digitalWrite(greenLEDPin, LOW);
+  digitalWrite(blueLEDPin, LOW);
+  delay(50); // Small delay to ensure LEDs are off
   
+  // Then set the correct LED based on state
   switch (currentState) {
     case 0: // Red
       digitalWrite(redLEDPin, HIGH);
-      digitalWrite(greenLEDPin, LOW);
-      digitalWrite(blueLEDPin, LOW);
-      Serial.println("DEBUG: Red ON");
+      Serial.println("Setting RED ON");
       break;
     case 1: // Green
-      digitalWrite(redLEDPin, LOW);
       digitalWrite(greenLEDPin, HIGH);
-      digitalWrite(blueLEDPin, LOW);
-      Serial.println("DEBUG: Green ON");
+      Serial.println("Setting GREEN ON");
       break;
     case 2: // Blue
-      digitalWrite(redLEDPin, LOW);
-      digitalWrite(greenLEDPin, LOW);
       digitalWrite(blueLEDPin, HIGH);
-      Serial.println("DEBUG: Blue ON");
+      Serial.println("Setting BLUE ON");
       break;
   }
+  
+  // Debug output
+  Serial.print("DEBUG: Current state is: ");
+  Serial.println(currentState);
 }
 
 void sendStateToServer() {

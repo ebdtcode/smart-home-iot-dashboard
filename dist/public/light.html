@@ -30,6 +30,15 @@
     #red-led .led { background: radial-gradient(circle at 30% 30%, rgb(254, 202, 202), rgb(239, 68, 68)); }
     #green-led .led { background: radial-gradient(circle at 30% 30%, rgb(187, 247, 208), rgb(34, 197, 94)); }
     #blue-led .led { background: radial-gradient(circle at 30% 30%, rgb(191, 219, 254), rgb(59, 130, 246)); }
+    
+    .led-card {
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    
+    .led-card:hover {
+      transform: translateY(-2px);
+    }
   </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col font-sans">
