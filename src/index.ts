@@ -54,7 +54,14 @@ app.use((err: Error, req: express.Request, res: express.Response, next: express.
 // Serial port event handlers
 lightPortManager.on('data', (parsedData) => {
   console.log('Received light data from Arduino:', parsedData);
-  dataService.updateLightData(parsedData);
+  // Add validation before updating
+  if (typeof parsedData.state === 'number' && 
+      parsedData.state >= 0 && 
+      parsedData.state <= 2) {
+    dataService.updateLightData(parsedData);
+  } else {
+    console.warn('Invalid light state received:', parsedData);
+  }
 });
 
 environmentalPortManager.on('data', (parsedData) => {

@@ -62,7 +62,13 @@ class DataService {
     // Light methods
     updateLightData(data) {
         try {
-            this.lightData = Object.assign(Object.assign(Object.assign({}, this.lightData), data), { timestamp: Date.now(), status: 1 });
+            // Create a new state object
+            const newState = Object.assign(Object.assign(Object.assign({}, this.lightData), data), { timestamp: Date.now(), status: 1 });
+            // Ensure state is within valid range
+            if (typeof newState.state === 'number') {
+                newState.state = Math.max(0, Math.min(2, newState.state));
+            }
+            this.lightData = newState;
             this.lastErrors.light = null;
             return this.lightData;
         }

@@ -273,6 +273,9 @@ function handleLedClick(state) {
     return __awaiter(this, void 0, void 0, function* () {
         console.log(`LED clicked with state: ${state}`);
         try {
+            // Disable all LED clicks temporarily
+            const leds = document.querySelectorAll('.led-card');
+            leds.forEach(led => led.style.pointerEvents = 'none');
             const response = yield fetch('/data/light/setState', {
                 method: 'POST',
                 headers: {
@@ -286,9 +289,16 @@ function handleLedClick(state) {
             const data = yield response.json();
             console.log('Response from server:', data);
             updateLightDashboard(data);
+            // Re-enable LED clicks after a short delay
+            setTimeout(() => {
+                leds.forEach(led => led.style.pointerEvents = 'auto');
+            }, 500);
         }
         catch (error) {
             console.error('Error setting light state:', error);
+            // Re-enable LED clicks on error
+            const leds = document.querySelectorAll('.led-card');
+            leds.forEach(led => led.style.pointerEvents = 'auto');
         }
     });
 }

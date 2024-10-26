@@ -313,6 +313,10 @@ document.addEventListener('DOMContentLoaded', () => {
 async function handleLedClick(state: number) {
   console.log(`LED clicked with state: ${state}`);
   try {
+    // Disable all LED clicks temporarily
+    const leds = document.querySelectorAll('.led-card');
+    leds.forEach(led => (led as HTMLElement).style.pointerEvents = 'none');
+
     const response = await fetch('/data/light/setState', {
       method: 'POST',
       headers: {
@@ -328,8 +332,16 @@ async function handleLedClick(state: number) {
     const data = await response.json();
     console.log('Response from server:', data);
     updateLightDashboard(data);
+
+    // Re-enable LED clicks after a short delay
+    setTimeout(() => {
+      leds.forEach(led => (led as HTMLElement).style.pointerEvents = 'auto');
+    }, 500);
   } catch (error) {
     console.error('Error setting light state:', error);
+    // Re-enable LED clicks on error
+    const leds = document.querySelectorAll('.led-card');
+    leds.forEach(led => (led as HTMLElement).style.pointerEvents = 'auto');
   }
 }
 

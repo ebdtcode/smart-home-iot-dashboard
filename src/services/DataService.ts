@@ -89,12 +89,20 @@ export class DataService {
   // Light methods
   public updateLightData(data: Partial<LightData>): LightData {
     try {
-      this.lightData = {
+      // Create a new state object
+      const newState = {
         ...this.lightData,
         ...data,
         timestamp: Date.now(),
         status: 1
       };
+
+      // Ensure state is within valid range
+      if (typeof newState.state === 'number') {
+        newState.state = Math.max(0, Math.min(2, newState.state));
+      }
+
+      this.lightData = newState;
       this.lastErrors.light = null;
       return this.lightData;
     } catch (error) {
